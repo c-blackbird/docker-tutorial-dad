@@ -1,7 +1,7 @@
 ﻿# Actividad DAD - Docker Tutorial
 
 **Fecha:** 05/05/2026  
-**Autor:** [PONE TU NOMBRE ACÁ]  
+**Autor:** Martin sanchez  
 **Materia:** DAD
 
 ## ejem01 - Contenedor con Apache + PHP
