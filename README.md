@@ -1,44 +1,78 @@
-﻿# Actividad DAD - Docker Tutorial
+﻿Actividad DAD - Docker Tutorial
+Fecha: 05/05/2026
+Autor: Sanchez Martin
+Materia: DAD
 
-**Fecha:** 05/05/2026  
-**Autor:** Martin sanchez  
-**Materia:** DAD
+ejem01 - Contenedor con Apache + PHP
+Descripción
+Se creó una imagen Docker (usando Podman) basada en php:8.2-apache que copia una página web simple y expone el puerto 80.
 
-## ejem01 - Contenedor con Apache + PHP
+Pasos realizados
+Creación del Dockerfile:
 
-Se creó una imagen con Podman usando `php:8.2-apache`. La página web muestra el nombre del alumno.
+text
+FROM php:8.2-apache
+RUN apt-get update && apt-get install -y vim
+COPY src/ /var/www/html
+EXPOSE 80
+Construcción de la imagen:
 
-### Capturas
+text
+podman build -t miapache-php .
+Ejecución del contenedor:
 
-![Edición con Vim dentro del contenedor](ejem01/capturas/terminal-vi.png)
-![Página web en navegador](ejem01/capturas/navegador.png)
+text
+podman run -dit --name miapache-php -p 5555:80 miapache-php
+Edición del index.html desde dentro del contenedor usando nano:
 
-## ejem02 - Script run.sh
+text
+podman exec -it miapache-php /bin/bash
+cd /var/www/html
+nano index.html
+Capturas
+Las capturas de pantalla se encuentran dentro de la carpeta ejem01/capturas/:
 
-Los comandos del script `run.sh` se ejecutaron manualmente:
+terminal-vi.png - Edición con nano dentro del contenedor
 
-- `podman rm -f miapache-php` - Elimina el contenedor si existe
-- `podman rmi -f miapache-php` - Elimina la imagen si existe
-- `podman build -t miapache-php .` - Construye la imagen
-- `podman run -dit --name miapache-php -p 5555:80 miapache-php` - Ejecuta el contenedor
+navegador.png - Página web funcionando en navegador
 
-## ejem03 - Portabilidad de scripts .sh
+ejem02 - Script run.sh
+Comandos ejecutados manualmente
+Los comandos del script run.sh se ejecutaron uno por uno en PowerShell:
 
-### ¿Qué inconvenientes tiene correr scripts de SO (`.sh`) en diferentes plataformas?
+text
+podman rm -f miapache-php
+podman rmi -f miapache-php
+podman build -t miapache-php .
+podman run -dit --name miapache-php -p 5555:80 miapache-php
+Explicación de cada comando
+podman rm -f miapache-php: Elimina el contenedor si existe (forzado)
 
-**Respuesta:**
+podman rmi -f miapache-php: Elimina la imagen si existe (forzado)
 
-1. **No son nativos en Windows** - Requieren WSL, Git Bash o PowerShell para ejecutarse.
+podman build -t miapache-php .: Construye una nueva imagen
 
-2. **Dependencia de comandos Unix/Linux** - Comandos como `rm -f` o `chmod +x` no existen en Windows puro.
+podman run -dit --name miapache-php -p 5555:80 miapache-php: Ejecuta el contenedor en segundo plano
 
-3. **Rutas diferentes** - Linux usa `/` mientras que Windows usa `\`.
+Resultado
+El contenedor se reconstruyó y volvió a funcionar correctamente en http://localhost:5555.
 
-4. **Permisos de ejecución** - El comando `chmod +x` no funciona en Windows.
+Captura
+La captura de pantalla de los comandos ejecutados se encuentra en ejem01/capturas/comandos-run-sh.png
 
-5. **Instalación de dependencias** - El script asume que `podman` o `docker` están instalados y en el PATH.
+ejem03 - Portabilidad de scripts .sh
+Pregunta
+¿Qué inconvenientes tiene correr scripts de SO (.sh) en diferentes plataformas?
 
-6. **Mejor práctica** - Para entornos multiplataforma, es recomendable usar `docker-compose.yml` o `podman-compose.yml` en lugar de scripts de shell.
+Respuesta
+No son nativos en Windows: Requieren WSL, Git Bash o PowerShell para ejecutarse
 
----
-*Actividad completada con Podman en Windows*
+Comandos específicos de Unix/Linux: rm -f, chmod +x no existen en Windows puro
+
+Rutas diferentes: Linux usa /, Windows usa \
+
+Permisos de ejecución: chmod +x no funciona en Windows
+
+Dependencias externas: El script asume que podman o docker están instalados
+
+Mejor práctica: Usar docker-compose.yml o podman-compose.yml para entornos multiplataforma
